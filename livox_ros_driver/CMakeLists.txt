@@ -19,6 +19,11 @@ find_package(Boost 1.54 REQUIRED COMPONENTS
 	chrono
 	)
 
+
+include_directories(
+	${catkin_INCLUDE_DIRS} 
+	${PCL_INCLUDE_DIRS})
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -30,6 +35,7 @@ find_package(catkin REQUIRED COMPONENTS
 	message_generation
 	rosbag
 	pcl_ros
+	geometry_msgs
 	)
 
 ## Find pcl lib
@@ -64,9 +70,12 @@ endif (APR_FOUND)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also n    eed
 catkin_package(CATKIN_DEPENDS
-	roscpp rospy std_msgs message_runtime
+	roscpp rospy std_msgs message_runtime geometry_msgs nav_msgs
 	pcl_ros
+	DEPENDS PCL
+  	INCLUDE_DIRS
 	)
+
 
 #---------------------------------------------------------------------------------------
 # Set default build to release
@@ -133,6 +142,19 @@ endif()
 ## PCL library
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
+
+
+
+add_executable(livox_repub livox_ros_driver/livox_repub.cpp)
+target_link_libraries(livox_repub ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBS})
+target_include_directories(livox_repub
+    PUBLIC
+    ${catkin_INCLUDE_DIRS}
+    ${PCL_INCLUDE_DIRS}
+    ${APR_INCLUDE_DIRS}
+    )
+
+
 
 #---------------------------------------------------------------------------------------
 # generate excutable and add libraries
