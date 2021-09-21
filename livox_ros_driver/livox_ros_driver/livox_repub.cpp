@@ -1,9 +1,27 @@
 #include <pcl_conversions/pcl_conversions.h>
+
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include "pcl/impl/instantiate.hpp"
+
 #include <sensor_msgs/PointCloud2.h>
 #include "livox_ros_driver/CustomMsg.h"
 
-typedef pcl::PointXYZINormal PointType;
-typedef pcl::PointCloud<PointType> PointCloudXYZI;
+struct LivoxPoint {
+    PCL_ADD_POINT4D;
+    float intensity;
+    uint8_t tag;
+    uint8_t line;
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+} EIGEN_ALIGN16;
+POINT_CLOUD_REGISTER_POINT_STRUCT (LivoxPoint,
+(float, x, x) (float, y, y) (float, z, z) (float, intensity, intensity)
+(uint8_t, tag, tag)(uint8_t, line, line)
+)
+
+
+typedef LivoxPoint PointType;
+//typedef pcl::PointCloud<PointType> PointCloudXYZI;
 
 ros::Publisher pub_pcl_out0, pub_pcl_out1;
 uint64_t TO_MERGE_CNT = 1; 
@@ -34,8 +52,11 @@ void LivoxMsgCbk1(const livox_ros_driver::CustomMsgConstPtr& livox_msg_in) {
       float s = livox_msg->points[i].offset_time / (float)time_end;
 
       pt.intensity = livox_msg->points[i].line +livox_msg->points[i].reflectivity; // The integer part is line number and the decimal part is timestamp
-      pt.curvature = s*0.1;
-      pcl_in.push_back(pt);
+//      pt.curvature = s*0.1;
+        pt.tag =    livox_msg->points[i].tag;
+        pt.line =    livox_msg->points[i].line;
+
+        pcl_in.push_back(pt);
     }
   }
 
