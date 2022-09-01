@@ -12,7 +12,7 @@
         {
             "broadcast_code": "3JEDJ5Q00100571",
             "enable_connect": true,
-            "return_mode": 1,
+            "return_mode": 3,
             "coordinate": 0,
             "imu_rate": 1,
             "extrinsic_parameter_source": 0,
